@@ -3,29 +3,40 @@ import styled, { keyframes } from 'styled-components';
 
 const DIV_WRAPPER = styled.div`
   align-items: center;
-  background: url('https://www.psitmatters.com/wp-content/uploads/2020/11/tucker-tangeman-SnXraH8PaQ4-unsplash-scaled.jpg')
-    no-repeat;
-  background-position: center center;
-  background-size: cover;
-
   display: flex;
   height: 560px;
   justify-content: center;
   position: relative;
   width: 100%;
 
-  @media (min-width: 1000px) {
-    height: 640px;
+  &.preload {
+    background: white;
+    background-position: center;
+
+    &::after {
+      display: none;
+    }
   }
 
-  &::after {
-    background: linear-gradient(0deg, #00000092 30%, #00000064 100%);
-    content: '';
-    height: 100%;
-    width: 100%;
-    position: absolute;
-    left: 0;
-    top: 0;
+  &.loaded {
+    background: url('https://www.psitmatters.com/wp-content/uploads/2020/11/tucker-tangeman-SnXraH8PaQ4-unsplash-scaled.jpg')
+      no-repeat;
+    background-position: center;
+    background-size: cover;
+
+    &::after {
+      background: linear-gradient(0deg, #00000092 30%, #00000064 100%);
+      content: '';
+      height: 100%;
+      width: 100%;
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+  }
+
+  @media (min-width: 1000px) {
+    height: 640px;
   }
 `;
 
@@ -40,6 +51,16 @@ const H1_BANNER = styled.h1`
   bottom: 120px;
   z-index: 10;
   width: 340px;
+  transition: all 400ms ease;
+
+  &.loaded {
+    color: #ffffff;
+    opacity: 1;
+  }
+
+  &.preload {
+    opacity: 0;
+  }
 
   @media (min-width: 500px) {
     font-size: 40px;
@@ -148,24 +169,33 @@ const UL_NUMBERS = styled.ul`
 export default function Banner() {
   const animateNumbersRef = React.useRef(null);
 
-  const [animateNumbers, setAnimateNumbers] = React.useState(false);
+  const [backgroundLoaded, setBackgroundLoaded] = React.useState(false);
 
   React.useEffect(() => {
-    const list = animateNumbersRef.current;
+    // Background Fade In
+    const img = new Image();
+    img.src =
+      'https://www.psitmatters.com/wp-content/uploads/2020/11/tucker-tangeman-SnXraH8PaQ4-unsplash-scaled.jpg';
+    img.onload = () => {
+      document.fonts.ready.then(() => {
+        setBackgroundLoaded(true);
+        const list = animateNumbersRef.current;
 
-    function createTimer(child, delay) {
-      return setTimeout(() => {
-        list.children[child].classList.add('animate');
-      }, delay);
-    }
+        function createTimer(child, delay) {
+          return setTimeout(() => {
+            list.children[child].classList.add('animate');
+          }, delay);
+        }
 
-    createTimer(0, 1000);
-    createTimer(1, 1500);
-    createTimer(2, 2000);
-    createTimer(3, 2500);
-    createTimer(4, 3000);
-    createTimer(5, 3500);
-  });
+        createTimer(0, 1000);
+        createTimer(1, 1500);
+        createTimer(2, 2000);
+        createTimer(3, 2500);
+        createTimer(4, 3000);
+        createTimer(5, 3500);
+      });
+    };
+  }, [backgroundLoaded]);
 
   const figures = [
     ['$4,769,933', 'Program Donations'],
@@ -176,8 +206,10 @@ export default function Banner() {
     ['139,732,470', 'Single-Use Bags Not Used*'],
   ];
   return (
-    <DIV_WRAPPER>
-      <H1_BANNER>Everyday choices can change the world.</H1_BANNER>
+    <DIV_WRAPPER className={backgroundLoaded ? 'loaded' : 'preload'}>
+      <H1_BANNER className={backgroundLoaded ? 'loaded' : 'preload'}>
+        Everyday choices can change the world.
+      </H1_BANNER>
       <DIV_TEXT>
         <UL_NUMBERS ref={animateNumbersRef}>
           {figures.map((e) => {
