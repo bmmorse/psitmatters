@@ -36,7 +36,11 @@ const DIV_WRAPPER = styled.div`
   }
 
   @media (min-width: 1000px) {
-    height: 640px;
+    height: 540px;
+  }
+
+  @media (min-width: 1600px) {
+    height: 600px;
   }
 `;
 

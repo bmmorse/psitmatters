@@ -5,7 +5,7 @@ const DIV_WRAPPER = styled.div`
   position: relative;
   width: 100%;
   display: grid;
-  padding: 120px 12% 120px 12%;
+  padding: 100px 12% 100px 12%;
   grid-template-columns: 1fr;
   gap: 40px 0px;
 
