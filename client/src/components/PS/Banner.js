@@ -191,12 +191,12 @@ export default function Banner() {
           }, delay);
         }
 
-        createTimer(0, 1000);
-        createTimer(1, 1500);
-        createTimer(2, 2000);
-        createTimer(3, 2500);
-        createTimer(4, 3000);
-        createTimer(5, 3500);
+        createTimer(0, 500);
+        createTimer(1, 1000);
+        createTimer(2, 1500);
+        createTimer(3, 2000);
+        createTimer(4, 2500);
+        createTimer(5, 3000);
       });
     };
   }, [backgroundLoaded]);
