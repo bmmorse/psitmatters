@@ -12,6 +12,9 @@ if (process.env.NODE_ENV === 'production') {
 // static assets
 app.use(express.static(path.join(__dirname, 'client/build')));
 
+// API
+app.use('/api', require('./API/psitmatters'));
+
 // Always serve React's index.html
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '/client/build/index.html'));
@@ -27,7 +30,7 @@ app.use((err, req, res, next) => {
 });
 
 // start the app
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 4004;
 app.listen(PORT, () => {
   console.log(`${process.env.NODE_ENV} || ${PORT}`);
 });
