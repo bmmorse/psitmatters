@@ -3,7 +3,7 @@ const axios = require('axios');
 
 router.get('/ps', (req, res, next) => {
   const url = 'https://www.psitmatters.com/';
-  const DATA = {};
+  const DATA = [];
 
   const DATA_TITLES = [
     'Program Donations',
@@ -26,7 +26,11 @@ router.get('/ps', (req, res, next) => {
           if (htmlString.includes(`${text}`)) {
             let regex = new RegExp(`\\$?[\\d|,]*?<\/b\>\<\/h1\>${text}`, 'g');
             let value = htmlString.match(regex)[0].split('</b></h1>');
-            DATA[`${text}`] = value[0];
+            const resultObj = {
+              title: `${text}`,
+              value: value[0],
+            };
+            DATA.push(resultObj);
           }
         });
       });

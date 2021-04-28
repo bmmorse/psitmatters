@@ -1,5 +1,6 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
+import axios from 'axios';
 
 const DIV_WRAPPER = styled.div`
   align-items: center;
@@ -121,14 +122,16 @@ const UL_NUMBERS = styled.ul`
   display: grid;
   gap: 40px 10px;
   grid-template-columns: 1fr 1fr;
-  height: 100%;
+  min-height: 261px;
   width: 100%;
 
   @media (min-width: 800px) {
     grid-template-columns: 1fr 1fr 1fr;
+    min-height: 134px;
   }
 
   @media (min-width: 1400px) {
+    min-height: 147px;
     display: flex;
   }
 
@@ -172,8 +175,9 @@ const UL_NUMBERS = styled.ul`
 
 export default function Banner() {
   const animateNumbersRef = React.useRef(null);
+  const wrapperRef = React.useRef(null);
 
-  const [backgroundLoaded, setBackgroundLoaded] = React.useState(false);
+  const [data, setData] = React.useState([]);
 
   React.useEffect(() => {
     // Background Fade In
@@ -182,48 +186,54 @@ export default function Banner() {
       'https://www.psitmatters.com/wp-content/uploads/2020/11/tucker-tangeman-SnXraH8PaQ4-unsplash-scaled.jpg';
     img.onload = () => {
       document.fonts.ready.then(() => {
-        setBackgroundLoaded(true);
-        const list = animateNumbersRef.current;
-
-        function createTimer(child, delay) {
-          return setTimeout(() => {
-            list.children[child].classList.add('animate');
-          }, delay);
-        }
-
-        createTimer(0, 500);
-        createTimer(1, 1000);
-        createTimer(2, 1500);
-        createTimer(3, 2000);
-        createTimer(4, 2500);
-        createTimer(5, 3000);
+        wrapperRef.current.classList.remove('preload');
+        wrapperRef.current.classList.add('loaded');
+        wrapperRef.current.children[0].classList.remove('preload');
+        wrapperRef.current.children[0].classList.add('loaded');
       });
     };
-  }, [backgroundLoaded]);
+  }, []);
 
-  const figures = [
-    ['$4,769,933', 'Program Donations'],
-    ['31,851', 'Non-Profits Supported'],
-    ['$93,937', 'Donations This Month'],
-    ['7,439', 'Hunger Org. Supported'],
-    ['19,716,115', 'Meals Provided*'],
-    ['139,732,470', 'Single-Use Bags Not Used*'],
-  ];
+  React.useEffect(() => {
+    axios.get('/api/ps').then((res) => {
+      console.log(res.data);
+      setData(res.data);
+    });
+  }, []);
+
+  React.useEffect(() => {
+    console.log('effect update');
+    if (data.length > 0) {
+      function createTimer(child, delay) {
+        return setTimeout(() => {
+          animateNumbersRef.current.children[child].classList.add('animate');
+        }, delay);
+      }
+      createTimer(0, 500);
+      createTimer(1, 1000);
+      createTimer(2, 1500);
+      createTimer(3, 2000);
+      createTimer(4, 2500);
+      createTimer(5, 3000);
+    }
+  }, [data]);
+
   return (
-    <DIV_WRAPPER className={backgroundLoaded ? 'loaded' : 'preload'}>
-      <H1_BANNER className={backgroundLoaded ? 'loaded' : 'preload'}>
+    <DIV_WRAPPER ref={wrapperRef} className='preload'>
+      <H1_BANNER className='preload'>
         Everyday choices can change the world.
       </H1_BANNER>
       <DIV_TEXT>
         <UL_NUMBERS ref={animateNumbersRef}>
-          {figures.map((e) => {
-            return (
-              <li key={e[1]}>
-                <h3>{e[0]}</h3>
-                <p>{e[1]}</p>
-              </li>
-            );
-          })}
+          {data.length > 0 &&
+            data.map((property) => {
+              return (
+                <li key={property.title}>
+                  <h3>{property.value}</h3>
+                  <p>{property.title}</p>
+                </li>
+              );
+            })}
         </UL_NUMBERS>
       </DIV_TEXT>
     </DIV_WRAPPER>
